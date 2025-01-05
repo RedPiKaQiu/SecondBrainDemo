@@ -13,6 +13,11 @@ struct ContentView: View {
     @Query private var items: [Item]
 
     var body: some View {
+        Text("Placeholder")
+            .font(.title)
+            .fontWeight(.light)
+            .foregroundColor(Color.blue)
+        Slider(value: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Value@*/.constant(10)/*@END_MENU_TOKEN@*/)
         NavigationSplitView {
             List {
                 ForEach(items) { item in
