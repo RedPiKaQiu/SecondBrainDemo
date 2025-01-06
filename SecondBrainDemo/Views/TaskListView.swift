@@ -1,12 +1,33 @@
 import SwiftUI
 
 struct TaskListView: View {
-    @StateObject private var viewModel = TaskViewModel()
+    @EnvironmentObject private var viewModel: TaskViewModel
     @State private var showingAddTask = false
     @State private var showingTaskControl = false
     @State private var showingPersonal = false
     @State private var showingChat = false
     @State private var selectedTab = 0
+    
+    // 获取当前日期
+    private var currentDate: Date {
+        Calendar.current.startOfDay(for: Date())
+    }
+    
+    // 格式化星期
+    private var weekdayString: String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "zh_CN")
+        formatter.dateFormat = "EEEE"
+        return formatter.string(from: currentDate)
+    }
+    
+    // 格式化日期
+    private var dateString: String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "zh_CN")
+        formatter.dateFormat = "MM月 第dd日, yyyy"
+        return formatter.string(from: currentDate)
+    }
     
     var body: some View {
         NavigationView {
@@ -37,10 +58,10 @@ struct TaskListView: View {
                 
                 // 日期显示
                 VStack {
-                    Text("星期六")
+                    Text(weekdayString)
                         .font(.title)
                         .bold()
-                    Text("十二月 第21, 2024")
+                    Text(dateString)
                         .foregroundColor(.gray)
                 }
                 .padding()
@@ -54,7 +75,8 @@ struct TaskListView: View {
                     HStack {
                         Text("晒太阳☀️")
                         Spacer()
-                        Button(action: {}) {
+                        Button(action: {
+                        }) {
                             Text("OK!")
                                 .foregroundColor(.white)
                                 .padding()
@@ -86,9 +108,9 @@ struct TaskListView: View {
                 // 任务列表
                 ScrollView {
                     VStack(spacing: 15) {
-                        TaskCheckboxItem(priority: 3, label: "!!! Checkbox")
-                        TaskCheckboxItem(priority: 2, label: "!! Checkbox")
-                        TaskCheckboxItem(priority: 1, label: "Checkbox")
+                        ForEach(viewModel.tasksForDate(currentDate)) { task in
+                            TaskCheckboxItem(task: task, date: currentDate)
+                        }
                     }
                     .padding()
                 }
@@ -124,10 +146,12 @@ struct TaskListView: View {
             .background(Color(uiColor: .systemGroupedBackground))
         }
         .sheet(isPresented: $showingAddTask) {
-            AddTaskView(viewModel: viewModel)
+            AddTaskView()
+                .environmentObject(viewModel)
         }
         .sheet(isPresented: $showingTaskControl) {
-            TaskControlView(viewModel: viewModel)
+            TaskControlView()
+                .environmentObject(viewModel)
         }
         .sheet(isPresented: $showingPersonal) {
             PersonalView()
@@ -135,11 +159,13 @@ struct TaskListView: View {
         .sheet(isPresented: $showingChat) {
             ChatView()
         }
+
     }
 }
 
 struct TaskListView_Previews: PreviewProvider {
     static var previews: some View {
         TaskListView()
+            .environmentObject(TaskViewModel.shared)
     }
 } 

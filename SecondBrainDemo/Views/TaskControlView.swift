@@ -2,8 +2,28 @@ import SwiftUI
 
 struct TaskControlView: View {
     @Environment(\.dismiss) private var dismiss
-    @ObservedObject var viewModel: TaskViewModel
+    @EnvironmentObject var viewModel: TaskViewModel
     @State private var selectedTab = 0
+    
+    // 获取当前日期
+    private var currentDate: Date {
+        Date()
+    }
+    
+    // 根据选中的标签获取对应的任务
+    private var filteredTasks: [Task] {
+        let tasks = viewModel.tasksForDate(currentDate)
+        switch selectedTab {
+        case 0: // Routine
+            return tasks.filter { $0.tag == .routine }
+        case 1: // Activity
+            return tasks.filter { $0.tag == .activity }
+        case 2: // Parking lot
+            return tasks.filter { $0.tag == .parking }
+        default:
+            return []
+        }
+    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -38,15 +58,16 @@ struct TaskControlView: View {
             // 任务列表
             ScrollView {
                 VStack(spacing: 15) {
-                    TaskCheckboxItem(priority: 3, label: "!!! Checkbox")
-                    TaskCheckboxItem(priority: 2, label: "!! Checkbox")
-                    TaskCheckboxItem(priority: 1, label: "Checkbox")
+                    ForEach(filteredTasks) { task in
+                        TaskCheckboxItem(task: task, date: currentDate)
+                    }
                 }
                 .padding()
             }
             
             Spacer()
         }
+        .background(Color(uiColor: .systemGroupedBackground))
     }
 }
 
@@ -69,25 +90,11 @@ struct TabButton: View {
     }
 }
 
-struct TaskCheckboxItem: View {
-    let priority: Int
-    let label: String
-    @State private var isChecked = false
-    
-    var body: some View {
-        HStack {
-            Button(action: { isChecked.toggle() }) {
-                Image(systemName: isChecked ? "checkmark.square" : "square")
-                    .foregroundColor(.gray)
-            }
-            Text(label)
-            Spacer()
-            Text(priority > 1 ? "日常" : "活动")
-                .font(.caption)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(4)
-        }
+struct TaskControlView_Previews: PreviewProvider {
+    static var previews: some View {
+        TaskControlView()
+            .environmentObject(TaskViewModel.shared)
     }
-} 
+}
+
+

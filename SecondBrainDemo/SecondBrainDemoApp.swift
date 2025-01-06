@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct SecondBrainDemoApp: App {
+    @StateObject private var taskViewModel = TaskViewModel.shared
+    
     var body: some Scene {
         WindowGroup {
             TaskListView()
+                .environmentObject(taskViewModel)
         }
     }
 }
