@@ -3,13 +3,23 @@ import Combine
 
 class TaskViewModel: ObservableObject {
     @Published var tasks: [Task] = []
+    @Published var selectedTaskType: TaskType = .anytime
+    
+    enum TaskType {
+        case anytime
+        case planned
+        case done
+        case routine
+        case activity
+        case parkingLot
+    }
     
     init() {
         // 添加一些测试数据
         tasks = [
-            Task(title: "完成App开发", descriptionText: "开发一个日程管理应用", priority: 1),
-            Task(title: "学习SwiftUI", descriptionText: "掌握SwiftUI基础知识", priority: 2),
-            Task(title: "写技术文档", descriptionText: "编写开发文档", priority: 0)
+            Task(title: "!!! Checkbox", descriptionText: "", priority: 3, tags: ["日常"]),
+            Task(title: "!! Checkbox", descriptionText: "", priority: 2, tags: ["活动"]),
+            Task(title: "Checkbox", descriptionText: "", priority: 1, tags: ["日常"])
         ]
     }
     
@@ -20,5 +30,11 @@ class TaskViewModel: ObservableObject {
     
     func deleteTask(at indexSet: IndexSet) {
         tasks.remove(atOffsets: indexSet)
+    }
+    
+    func toggleTaskCompletion(_ task: Task) {
+        if let index = tasks.firstIndex(where: { $0.id == task.id }) {
+            tasks[index].isCompleted.toggle()
+        }
     }
 } 
