@@ -26,11 +26,27 @@ class TaskViewModel: ObservableObject {
     }
     
     // 添加任务到指定日期
-    func addTask(title: String, description: String = "", priority: Task.Priority = .low, tag: Task.TaskTag = .routine, date: Date = Date()) {
+    func addTask(title: String, 
+                description: String = "", 
+                startTime: Date = Date(),
+                lastTime: TimeInterval = 1800,
+                priority: Task.Priority = .low, 
+                tag: Task.TaskTag = .routine,
+                hasTime: Bool = false,
+                date: Date = Date()) {
         let calendar = Calendar.current
         let normalizedDate = calendar.startOfDay(for: date)
         
-        let task = Task(title: title, descriptionText: description, priority: priority, tag: tag)
+        let task = Task(
+            title: title, 
+            descriptionText: description, 
+            startTime: startTime,
+            lastTime: lastTime,
+            priority: priority, 
+            tag: tag,
+            hasTime: hasTime
+        )
+        
         if tasks[normalizedDate] == nil {
             tasks[normalizedDate] = []
         }
@@ -64,14 +80,37 @@ class TaskViewModel: ObservableObject {
     
     private init() {
         print("TaskViewModel initialized")
-        // 使用日期工具获取今天的开始时间
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
         
+        // 创建一些测试数据
+        let now = Date()
         tasks[today] = [
-            Task(title: "!!! Checkbox", priority: .high, tag: .routine),
-            Task(title: "!! Checkbox", priority: .medium, tag: .activity),
-            Task(title: "Checkbox", priority: .low, tag: .parking)
+            // 有时间的任务
+            Task(title: "计划任务A", 
+                 startTime: now.addingTimeInterval(3600), // 1小时后
+                 lastTime: 1800, // 30分钟
+                 priority: .high,
+                 tag: .routine,
+                 hasTime: true),
+             
+            Task(title: "计划任务B",
+                 startTime: now.addingTimeInterval(7200), // 2小时后
+                 lastTime: 3600, // 1小时
+                 priority: .medium,
+                 tag: .activity,
+                 hasTime: true),
+                 
+            // 无时间的任务
+            Task(title: "随时任务A",
+                 priority: .low,
+                 tag: .routine,
+                 hasTime: false),
+                 
+            Task(title: "随时任务B",
+                 priority: .medium,
+                 tag: .parking,
+                 hasTime: false)
         ]
         
         print("初始化数据：")

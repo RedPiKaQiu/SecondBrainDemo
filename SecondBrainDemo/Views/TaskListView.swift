@@ -29,6 +29,21 @@ struct TaskListView: View {
         return formatter.string(from: currentDate)
     }
     
+    // 根据选中的标签获取对应的任务
+    private var filteredTasks: [Task] {
+        let tasks = viewModel.tasksForDate(currentDate)
+        switch selectedTab {
+        case 0: // Anytime
+            return tasks.filter { !$0.hasTime }
+        case 1: // Planned
+            return tasks.filter { $0.hasTime }
+        case 2: // Done
+            return tasks.filter { $0.isCompleted }
+        default:
+            return []
+        }
+    }
+    
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
@@ -108,7 +123,7 @@ struct TaskListView: View {
                 // 任务列表
                 ScrollView {
                     VStack(spacing: 15) {
-                        ForEach(viewModel.tasksForDate(currentDate)) { task in
+                        ForEach(filteredTasks) { task in
                             TaskCheckboxItem(task: task, date: currentDate)
                         }
                     }

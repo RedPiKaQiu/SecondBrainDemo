@@ -4,12 +4,13 @@ class Task: Identifiable, ObservableObject {
     let id: UUID
     var title: String
     var descriptionText: String
-    var startDate: Date
+    var startTime: Date
     var lastTime: TimeInterval
     var reminderDate: Date
     @Published var isCompleted: Bool
     @Published var priority: Priority
     let tag: TaskTag
+    let hasTime: Bool
     
     enum Priority: Int, CaseIterable {
         case low = 0
@@ -38,20 +39,22 @@ class Task: Identifiable, ObservableObject {
     init(id: UUID = UUID(), 
          title: String, 
          descriptionText: String = "",
-         startDate: Date = Date(),
-         lastTime: TimeInterval = 3600,
+         startTime: Date = Date(),
+         lastTime: TimeInterval = 1800,
          reminderDate: Date = Date(),
          isCompleted: Bool = false,
          priority: Priority = .low,
-         tag: TaskTag = .routine) {
+         tag: TaskTag = .routine,
+         hasTime: Bool = false) {
         self.id = id
         self.title = title
         self.descriptionText = descriptionText
-        self.startDate = startDate
+        self.startTime = startTime
         self.lastTime = lastTime
         self.reminderDate = reminderDate
         self.isCompleted = isCompleted
         self.priority = priority
         self.tag = tag
+        self.hasTime = hasTime
     }
 } 
