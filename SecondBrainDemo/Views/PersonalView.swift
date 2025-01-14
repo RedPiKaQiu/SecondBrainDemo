@@ -2,8 +2,8 @@ import SwiftUI
 
 struct PersonalView: View {
     @Environment(\.dismiss) private var dismiss
-    let userName = "Shell"
-    let email = "aab@gmail.com"
+    @StateObject private var userProfile = UserProfile.shared
+    @State private var showingSettings = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -17,7 +17,7 @@ struct PersonalView: View {
                         .cornerRadius(8)
                 }
                 Spacer()
-                Button(action: {}) {
+                Button(action: { showingSettings = true }) {
                     Text("setting")
                         .foregroundColor(.white)
                         .padding()
@@ -26,13 +26,14 @@ struct PersonalView: View {
                 }
             }
             .padding()
+            .padding(.top, getSafeAreaInsets().top)
             
             // 用户信息
             VStack(alignment: .leading, spacing: 8) {
-                Text(userName)
+                Text(userProfile.name)
                     .font(.title)
                     .bold()
-                Text(email)
+                Text(userProfile.email)
                     .foregroundColor(.gray)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -75,5 +76,16 @@ struct PersonalView: View {
             Spacer()
         }
         .background(Color(uiColor: .systemGroupedBackground))
+        .ignoresSafeArea()
+        .sheet(isPresented: $showingSettings) {
+            UserSettingsView()
+        }
+    }
+    
+    private func getSafeAreaInsets() -> UIEdgeInsets {
+        guard let window = UIApplication.shared.windows.first else {
+            return UIEdgeInsets()
+        }
+        return window.safeAreaInsets
     }
 } 

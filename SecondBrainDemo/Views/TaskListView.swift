@@ -2,6 +2,7 @@ import SwiftUI
 
 struct TaskListView: View {
     @EnvironmentObject private var viewModel: TaskViewModel
+    @StateObject private var userProfile = UserProfile.shared
     @State private var showingAddTask = false
     @State private var showingTaskControl = false
     @State private var showingPersonal = false
@@ -25,7 +26,7 @@ struct TaskListView: View {
     private var dateString: String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "zh_CN")
-        formatter.dateFormat = "MM月 第dd日, yyyy"
+        formatter.dateFormat = "MM月dd日, yyyy"
         return formatter.string(from: currentDate)
     }
     
@@ -58,7 +59,7 @@ struct TaskListView: View {
                     }
                     Spacer()
                     Button(action: { showingPersonal = true }) {
-                        Text("name")
+                        Text(userProfile.name)
                             .foregroundColor(.white)
                             .padding()
                             .background(Color(red: 0.4, green: 0.4, blue: 1.0))
