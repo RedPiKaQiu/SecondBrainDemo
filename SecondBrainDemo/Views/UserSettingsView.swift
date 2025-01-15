@@ -10,7 +10,7 @@ struct UserSettingsView: View {
             name: UserProfile.shared.name,
             email: UserProfile.shared.email,
             gender: UserProfile.shared.gender,
-            age: UserProfile.shared.age,
+            birthDate: UserProfile.shared.birthDate,
             hasADHD: UserProfile.shared.hasADHD,
             occupation: UserProfile.shared.occupation,
             usageIntensity: UserProfile.shared.preferences.usageIntensity,
@@ -29,7 +29,10 @@ struct UserSettingsView: View {
                         Text("女").tag(UserProfile.Gender.female)
                         Text("其他").tag(UserProfile.Gender.other)
                     }
-                    Stepper("年龄: \(tempProfile.age)", value: $tempProfile.age, in: 1...120)
+                    DatePicker("出生日期",
+                              selection: $tempProfile.birthDate,
+                              in: ...Date(),
+                              displayedComponents: .date)
                 }
                 
                 Section(header: Text("其他信息")) {
@@ -73,7 +76,7 @@ struct UserSettingsView: View {
         userProfile.name = tempProfile.name
         userProfile.email = tempProfile.email
         userProfile.gender = tempProfile.gender
-        userProfile.age = tempProfile.age
+        userProfile.birthDate = tempProfile.birthDate
         userProfile.hasADHD = tempProfile.hasADHD
         userProfile.occupation = tempProfile.occupation
         userProfile.preferences.usageIntensity = tempProfile.usageIntensity
@@ -87,7 +90,7 @@ private struct TempUserProfile {
     var name: String
     var email: String
     var gender: UserProfile.Gender
-    var age: Int
+    var birthDate: Date
     var hasADHD: Bool
     var occupation: UserProfile.Occupation
     var usageIntensity: UserProfile.UserPreferences.UsageIntensity

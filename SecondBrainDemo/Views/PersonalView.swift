@@ -88,4 +88,12 @@ struct PersonalView: View {
         }
         return window.safeAreaInsets
     }
+    
+    private func formatBirthDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .long
+        formatter.timeStyle = .none
+        formatter.locale = Locale(identifier: "zh_CN")
+        return "出生日期: " + formatter.string(from: date)
+    }
 } 

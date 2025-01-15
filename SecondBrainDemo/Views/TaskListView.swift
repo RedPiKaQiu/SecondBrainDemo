@@ -8,6 +8,7 @@ struct TaskListView: View {
     @State private var showingPersonal = false
     @State private var showingChat = false
     @State private var selectedTab = 0
+    @State private var tabOrder = ["Anytime", "Planned", "Done"]
     
     // 获取当前日期
     private var currentDate: Date {
@@ -33,12 +34,13 @@ struct TaskListView: View {
     // 根据选中的标签获取对应的任务
     private var filteredTasks: [Task] {
         let tasks = viewModel.tasksForDate(currentDate)
-        switch selectedTab {
-        case 0: // Anytime
+        let tabType = tabOrder[selectedTab]
+        switch tabType {
+        case "Anytime":
             return tasks.filter { !$0.hasTime }
-        case 1: // Planned
+        case "Planned":
             return tasks.filter { $0.hasTime }
-        case 2: // Done
+        case "Done":
             return tasks.filter { $0.isCompleted }
         default:
             return []
@@ -109,13 +111,32 @@ struct TaskListView: View {
                 
                 // 底部标签栏
                 HStack(spacing: 40) {
-                    TabButton(title: "Anytime", icon: "cup.and.saucer.fill", isSelected: selectedTab == 0) {
-                        selectedTab = 0
+                    ForEach(0..<2) { index in
+                        TabButton(
+                            title: tabOrder[index],
+                            icon: iconFor(tabOrder[index]),
+                            isSelected: selectedTab == index
+                        ) {
+                            selectedTab = index
+                        }
+                        .gesture(
+                            DragGesture()
+                                .onChanged { _ in }
+                                .onEnded { _ in
+                                    if index == 0 || index == 1 {
+                                        withAnimation {
+                                            tabOrder.swapAt(0, 1)
+                                        }
+                                    }
+                                }
+                        )
                     }
-                    TabButton(title: "Planned", icon: "hexagon", isSelected: selectedTab == 1) {
-                        selectedTab = 1
-                    }
-                    TabButton(title: "Done", icon: "checkmark", isSelected: selectedTab == 2) {
+                    
+                    TabButton(
+                        title: tabOrder[2],
+                        icon: "checkmark",
+                        isSelected: selectedTab == 2
+                    ) {
                         selectedTab = 2
                     }
                 }
@@ -176,6 +197,19 @@ struct TaskListView: View {
             ChatView()
         }
 
+    }
+    
+    private func iconFor(_ tab: String) -> String {
+        switch tab {
+        case "Anytime":
+            return "cup.and.saucer.fill"
+        case "Planned":
+            return "hexagon"
+        case "Done":
+            return "checkmark"
+        default:
+            return ""
+        }
     }
 }
 

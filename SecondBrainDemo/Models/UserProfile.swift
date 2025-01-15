@@ -7,7 +7,7 @@ class UserProfile: ObservableObject {
     @Published var name: String
     @Published var email: String
     @Published var gender: Gender
-    @Published var age: Int
+    @Published var birthDate: Date
     @Published var hasADHD: Bool
     @Published var occupation: Occupation
     @Published var isVIP: Bool
@@ -50,7 +50,7 @@ class UserProfile: ObservableObject {
         self.name = "Shell"
         self.email = "aab@gmail.com"
         self.gender = .female
-        self.age = 25
+        self.birthDate = Calendar.current.date(from: DateComponents(year: 1998, month: 1, day: 1)) ?? Date()
         self.hasADHD = true
         self.occupation = .worker
         self.isVIP = true
